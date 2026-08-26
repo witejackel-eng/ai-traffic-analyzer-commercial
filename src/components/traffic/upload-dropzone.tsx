@@ -2,7 +2,6 @@
 
 import { useCallback, useRef, useState } from "react";
 import { useNav } from "./nav-context";
-import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -11,8 +10,10 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { config } from "@/lib/config";
 
+type Status = "idle" | "uploading" | "saving" | "success" | "error";
+
 interface UploadState {
-  status: "idle" | "uploading" | "success" | "error";
+  status: Status;
   progress: number;
   filename?: string;
   error?: string;
@@ -30,22 +31,18 @@ export function UploadDropzone({ projectId, onUploaded }: { projectId: string; o
 
   const handleFile = useCallback(
     async (file: File) => {
-      // client-side validation
       const ext = "." + (file.name.split(".").pop() || "").toLowerCase();
       const allowed = accept.split(",");
       if (!allowed.includes(ext)) {
         setState({ status: "error", error: `Unsupported format. Allowed: ${allowed.join(", ")}` });
-        toast.error(`Unsupported format: ${ext}`);
         return;
       }
       if (file.size > maxMb * 1024 * 1024) {
         setState({ status: "error", error: `File exceeds ${maxMb}MB limit` });
-        toast.error(`File too large (max ${maxMb}MB)`);
         return;
       }
       if (file.size === 0) {
         setState({ status: "error", error: "File is empty" });
-        toast.error("File is empty");
         return;
       }
 
@@ -58,72 +55,58 @@ export function UploadDropzone({ projectId, onUploaded }: { projectId: string; o
       try {
         const xhr = new XMLHttpRequest();
         xhr.open("POST", "/api/upload");
-        // Track whether onload has fired to prevent onprogress from
-        // overwriting the "success" state (race condition fix).
-        let onloadFired = false;
+        let responseReceived = false;
 
         xhr.upload.onprogress = (e) => {
           if (e.lengthComputable) {
             const pct = Math.round((e.loaded / e.total) * 100);
-            // Only update to "processing" if onload hasn't already set "success"
-            if (pct >= 100 && !onloadFired) {
-              // Keep showing "uploading" at 100% — the server response
-              // (onload) will transition to "success" in <100ms.
-              // No "processing" state — it can get stuck if the server crashes.
-              setState((s) => ({ ...s, progress: 100 }));
+            if (pct >= 100 && !responseReceived) {
+              // Bytes transferred — server is now writing the file + probing
+              setState({ status: "saving", progress: 100, filename: file.name });
             } else if (pct < 100) {
               setState((s) => ({ ...s, progress: pct }));
             }
           }
         };
+
         xhr.onload = () => {
-          onloadFired = true;
+          responseReceived = true;
           if (xhr.status === 201) {
-            const data = JSON.parse(xhr.responseText);
-            setState({ status: "success", progress: 100, filename: file.name, videoId: data.video.id });
-            const sizeMb = data.uploadStats?.sizeMb;
-            const sizeStr = sizeMb ? ` (${sizeMb}MB)` : "";
-            toast.success(`Video saved${sizeStr} — ready to analyze!`);
-            onUploaded?.();
-            // Poll for metadata in the background
-            if (data.uploadStats?.backgroundProbe && data.video?.id) {
-              const pollCount = { n: 0 };
-              const poll = async () => {
-                if (pollCount.n++ > 15) return; // 15 attempts over 15s
-                try {
-                  const r = await fetch(`/api/videos?projectId=${projectId}`);
-                  const vdata = await r.json();
-                  const v = vdata.videos?.find((vv: { id: string }) => vv.id === data.video.id);
-                  if (v && v.width > 0) {
-                    toast.info(`Metadata ready: ${v.width}×${v.height}, ${v.duration?.toFixed(1)}s`);
-                  } else {
-                    setTimeout(poll, 1000);
-                  }
-                } catch { /* ignore */ }
-              };
-              setTimeout(poll, 1500);
+            try {
+              const data = JSON.parse(xhr.responseText);
+              setState({ status: "success", progress: 100, filename: file.name, videoId: data.video.id });
+              const v = data.video;
+              const dims = v.width > 0 ? `${v.width}×${v.height}` : "ready";
+              const dur = v.duration > 0 ? `, ${v.duration.toFixed(1)}s` : "";
+              toast.success(`Video ready: ${dims}${dur}`);
+              onUploaded?.();
+            } catch {
+              setState({ status: "error", error: "Invalid server response" });
             }
           } else {
-            const err = JSON.parse(xhr.responseText || "{}");
-            setState({ status: "error", error: err.error || `HTTP ${xhr.status}` });
-            toast.error(err.error || `Upload failed (HTTP ${xhr.status})`);
+            try {
+              const err = JSON.parse(xhr.responseText || "{}");
+              setState({ status: "error", error: err.error || `HTTP ${xhr.status}` });
+            } catch {
+              setState({ status: "error", error: `Upload failed (HTTP ${xhr.status})` });
+            }
           }
         };
+
         xhr.onerror = () => {
-          onloadFired = true;
-          setState({ status: "error", error: "Network error during upload" });
-          toast.error("Network error during upload");
+          responseReceived = true;
+          setState({ status: "error", error: "Network error — the server may have crashed" });
         };
+
         xhr.ontimeout = () => {
-          onloadFired = true;
-          setState({ status: "error", error: "Upload timed out (the file may be too large)" });
-          toast.error("Upload timed out — try a smaller video");
+          responseReceived = true;
+          setState({ status: "error", error: "Upload timed out (file may be too large)" });
         };
-        xhr.timeout = 280_000;
+
+        xhr.timeout = 120_000; // 2 min cap
         xhr.send(formData);
       } catch (e) {
         setState({ status: "error", error: (e as Error).message });
-        toast.error((e as Error).message);
       }
     },
     [projectId, maxMb, onUploaded],
@@ -143,10 +126,7 @@ export function UploadDropzone({ projectId, onUploaded }: { projectId: string; o
 
   return (
     <Card
-      onDragOver={(e) => {
-        e.preventDefault();
-        setDragOver(true);
-      }}
+      onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
       onDragLeave={() => setDragOver(false)}
       onDrop={onDrop}
       className={cn(
@@ -199,17 +179,29 @@ export function UploadDropzone({ projectId, onUploaded }: { projectId: string; o
           </div>
         )}
 
+        {state.status === "saving" && (
+          <div className="space-y-3 py-2">
+            <div className="flex items-center gap-3">
+              <Loader2 className="h-5 w-5 animate-spin text-primary" />
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-sm font-medium">{state.filename}</div>
+                <div className="text-xs text-muted-foreground">Upload complete — saving + probing video…</div>
+              </div>
+            </div>
+            <Progress value={100} className="h-1.5" />
+          </div>
+        )}
+
         {state.status === "success" && (
           <div className="flex items-center gap-3 py-2">
             <CheckCircle2 className="h-6 w-6 shrink-0 text-emerald-500" />
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-medium">{state.filename}</div>
-              <div className="text-xs text-muted-foreground">Uploaded. Probed with FFmpeg — real metadata extracted.</div>
+              <div className="text-xs text-muted-foreground">Video saved and probed — ready to analyze.</div>
             </div>
             <Button
               size="sm"
               onClick={() => {
-                // create an analysis + run real inference
                 fetch("/api/analysis", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
@@ -246,14 +238,10 @@ export function UploadDropzone({ projectId, onUploaded }: { projectId: string; o
               <div className="text-sm font-medium text-destructive">Upload failed</div>
               <div className="text-xs text-muted-foreground">{state.error}</div>
             </div>
-            <Button size="sm" variant="outline" onClick={reset}>
-              Try again
-            </Button>
+            <Button size="sm" variant="outline" onClick={reset}>Try again</Button>
           </div>
         )}
       </CardContent>
     </Card>
   );
 }
-
-void useRouter;
