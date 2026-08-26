@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { config } from "@/lib/config";
 
 interface UploadState {
-  status: "idle" | "uploading" | "processing" | "success" | "error";
+  status: "idle" | "uploading" | "success" | "error";
   progress: number;
   filename?: string;
   error?: string;
@@ -58,19 +58,26 @@ export function UploadDropzone({ projectId, onUploaded }: { projectId: string; o
       try {
         const xhr = new XMLHttpRequest();
         xhr.open("POST", "/api/upload");
+        // Track whether onload has fired to prevent onprogress from
+        // overwriting the "success" state (race condition fix).
+        let onloadFired = false;
+
         xhr.upload.onprogress = (e) => {
           if (e.lengthComputable) {
             const pct = Math.round((e.loaded / e.total) * 100);
-            if (pct < 100) {
+            // Only update to "processing" if onload hasn't already set "success"
+            if (pct >= 100 && !onloadFired) {
+              // Keep showing "uploading" at 100% — the server response
+              // (onload) will transition to "success" in <100ms.
+              // No "processing" state — it can get stuck if the server crashes.
+              setState((s) => ({ ...s, progress: 100 }));
+            } else if (pct < 100) {
               setState((s) => ({ ...s, progress: pct }));
-            } else {
-              // Upload bytes received — now the server is processing (writing + probing).
-              // Show a "processing" state so the user knows it's not stuck.
-              setState((s) => ({ ...s, progress: 100, status: "processing" }));
             }
           }
         };
         xhr.onload = () => {
+          onloadFired = true;
           if (xhr.status === 201) {
             const data = JSON.parse(xhr.responseText);
             setState({ status: "success", progress: 100, filename: file.name, videoId: data.video.id });
@@ -78,10 +85,11 @@ export function UploadDropzone({ projectId, onUploaded }: { projectId: string; o
             const sizeStr = sizeMb ? ` (${sizeMb}MB)` : "";
             toast.success(`Video saved${sizeStr} — ready to analyze!`);
             onUploaded?.();
-            if (data.uploadStats?.backgroundProbe) {
+            // Poll for metadata in the background
+            if (data.uploadStats?.backgroundProbe && data.video?.id) {
               const pollCount = { n: 0 };
               const poll = async () => {
-                if (pollCount.n++ > 10) return;
+                if (pollCount.n++ > 15) return; // 15 attempts over 15s
                 try {
                   const r = await fetch(`/api/videos?projectId=${projectId}`);
                   const vdata = await r.json();
@@ -93,7 +101,7 @@ export function UploadDropzone({ projectId, onUploaded }: { projectId: string; o
                   }
                 } catch { /* ignore */ }
               };
-              setTimeout(poll, 1000);
+              setTimeout(poll, 1500);
             }
           } else {
             const err = JSON.parse(xhr.responseText || "{}");
@@ -102,26 +110,15 @@ export function UploadDropzone({ projectId, onUploaded }: { projectId: string; o
           }
         };
         xhr.onerror = () => {
+          onloadFired = true;
           setState({ status: "error", error: "Network error during upload" });
           toast.error("Network error during upload");
         };
         xhr.ontimeout = () => {
+          onloadFired = true;
           setState({ status: "error", error: "Upload timed out (the file may be too large)" });
           toast.error("Upload timed out — try a smaller video");
         };
-        // If the server doesn't respond within 30s after upload completes,
-        // assume the background processing is taking too long and show
-        // a "ready" state anyway (the video IS saved — the probe just hasn't finished).
-        const processingTimeout = setTimeout(() => {
-          setState((s) => {
-            if (s.status === "processing") {
-              toast.info("Video saved — metadata still processing. You can analyze it now.");
-              return { ...s, status: "success" };
-            }
-            return s;
-          });
-        }, 30_000);
-        xhr.onloadend = () => clearTimeout(processingTimeout);
         xhr.timeout = 280_000;
         xhr.send(formData);
       } catch (e) {
@@ -199,23 +196,6 @@ export function UploadDropzone({ projectId, onUploaded }: { projectId: string; o
               </div>
             </div>
             <Progress value={state.progress} className="h-1.5" />
-          </div>
-        )}
-
-        {state.status === "processing" && (
-          <div className="space-y-3 py-2">
-            <div className="flex items-center gap-3">
-              <Loader2 className="h-5 w-5 animate-spin text-primary" />
-              <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-medium">{state.filename}</div>
-                <div className="text-xs text-muted-foreground">Upload complete — processing video (writing + probing metadata)…</div>
-              </div>
-            </div>
-            <Progress value={100} className="h-1.5" />
-            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
-              This can take 5–15s for large/4K videos. The page isn't stuck.
-            </div>
           </div>
         )}
 
