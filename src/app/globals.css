@@ -43,73 +43,85 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/*
+ * Amber Field — a warm, editorial identity.
+ * Primary is a deep amber (road-sign ochre), not tech blue/teal.
+ * Backgrounds are warm cream / warm charcoal, never clinical white/black.
+ * Designed to feel like a serious traffic-engineering tool made by humans.
+ */
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.51 0.11 178.5);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.96 0.02 178.5);
-  --accent-foreground: oklch(0.4 0.08 178.5);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.51 0.11 178.5);
-  --chart-1: oklch(0.55 0.13 178.5);
-  --chart-2: oklch(0.62 0.16 250);
-  --chart-3: oklch(0.7 0.15 50);
-  --chart-4: oklch(0.58 0.2 20);
-  --chart-5: oklch(0.55 0.18 300);
-  --sidebar: oklch(0.21 0.02 220);
-  --sidebar-foreground: oklch(0.95 0 0);
-  --sidebar-primary: oklch(0.6 0.13 178.5);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.27 0.02 220);
-  --sidebar-accent-foreground: oklch(0.95 0 0);
-  --sidebar-border: oklch(0.3 0.02 220);
-  --sidebar-ring: oklch(0.6 0.13 178.5);
+  /* warm cream paper */
+  --background: oklch(0.985 0.006 75);
+  --foreground: oklch(0.22 0.01 55);
+  --card: oklch(0.995 0.004 75);
+  --card-foreground: oklch(0.22 0.01 55);
+  --popover: oklch(0.995 0.004 75);
+  --popover-foreground: oklch(0.22 0.01 55);
+  /* deep amber — road-sign ochre */
+  --primary: oklch(0.62 0.14 58);
+  --primary-foreground: oklch(0.99 0.005 75);
+  --secondary: oklch(0.96 0.012 68);
+  --secondary-foreground: oklch(0.3 0.02 55);
+  --muted: oklch(0.96 0.008 72);
+  --muted-foreground: oklch(0.52 0.015 60);
+  --accent: oklch(0.94 0.025 65);
+  --accent-foreground: oklch(0.38 0.06 55);
+  --destructive: oklch(0.58 0.22 28);
+  --border: oklch(0.9 0.012 70);
+  --input: oklch(0.92 0.01 70);
+  --ring: oklch(0.62 0.14 58);
+  /* warm chart palette — amber, forest, plum, gold, terracotta, slate */
+  --chart-1: oklch(0.62 0.14 58);
+  --chart-2: oklch(0.55 0.13 155);
+  --chart-3: oklch(0.5 0.12 300);
+  --chart-4: oklch(0.7 0.13 85);
+  --chart-5: oklch(0.6 0.16 30);
+  /* sidebar — warm charcoal-brown, not cold slate */
+  --sidebar: oklch(0.22 0.012 55);
+  --sidebar-foreground: oklch(0.94 0.008 75);
+  --sidebar-primary: oklch(0.7 0.14 60);
+  --sidebar-primary-foreground: oklch(0.22 0.012 55);
+  --sidebar-accent: oklch(0.28 0.012 55);
+  --sidebar-accent-foreground: oklch(0.94 0.008 75);
+  --sidebar-border: oklch(0.32 0.012 55);
+  --sidebar-ring: oklch(0.7 0.14 60);
 }
 
 .dark {
-  --background: oklch(0.16 0.01 220);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.215 0.012 220);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.215 0.012 220);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.7 0.13 178.5);
-  --primary-foreground: oklch(0.16 0.02 220);
-  --secondary: oklch(0.27 0.015 220);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.27 0.015 220);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.3 0.02 178.5);
-  --accent-foreground: oklch(0.95 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.6 0.13 178.5);
-  --chart-1: oklch(0.6 0.13 178.5);
-  --chart-2: oklch(0.62 0.16 250);
-  --chart-3: oklch(0.7 0.15 50);
-  --chart-4: oklch(0.58 0.2 20);
-  --chart-5: oklch(0.55 0.18 300);
-  --sidebar: oklch(0.185 0.012 220);
-  --sidebar-foreground: oklch(0.95 0 0);
-  --sidebar-primary: oklch(0.7 0.13 178.5);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.27 0.015 220);
-  --sidebar-accent-foreground: oklch(0.95 0 0);
-  --sidebar-border: oklch(0.3 0.015 220);
-  --sidebar-ring: oklch(0.6 0.13 178.5);
+  /* warm near-black (brown-tinged, never cold) */
+  --background: oklch(0.17 0.008 55);
+  --foreground: oklch(0.95 0.006 75);
+  --card: oklch(0.215 0.01 55);
+  --card-foreground: oklch(0.95 0.006 75);
+  --popover: oklch(0.215 0.01 55);
+  --popover-foreground: oklch(0.95 0.006 75);
+  /* brighter amber for dark */
+  --primary: oklch(0.74 0.14 60);
+  --primary-foreground: oklch(0.17 0.008 55);
+  --secondary: oklch(0.27 0.012 55);
+  --secondary-foreground: oklch(0.95 0.006 75);
+  --muted: oklch(0.25 0.01 55);
+  --muted-foreground: oklch(0.7 0.012 65);
+  --accent: oklch(0.32 0.025 60);
+  --accent-foreground: oklch(0.92 0.02 70);
+  --destructive: oklch(0.68 0.21 25);
+  --border: oklch(1 0.005 75 / 9%);
+  --input: oklch(1 0.005 75 / 12%);
+  --ring: oklch(0.74 0.14 60);
+  --chart-1: oklch(0.74 0.14 60);
+  --chart-2: oklch(0.65 0.13 155);
+  --chart-3: oklch(0.6 0.13 300);
+  --chart-4: oklch(0.75 0.13 85);
+  --chart-5: oklch(0.68 0.17 30);
+  --sidebar: oklch(0.2 0.01 55);
+  --sidebar-foreground: oklch(0.94 0.008 75);
+  --sidebar-primary: oklch(0.74 0.14 60);
+  --sidebar-primary-foreground: oklch(0.17 0.008 55);
+  --sidebar-accent: oklch(0.26 0.012 55);
+  --sidebar-accent-foreground: oklch(0.94 0.008 75);
+  --sidebar-border: oklch(0.3 0.012 55);
+  --sidebar-ring: oklch(0.74 0.14 60);
 }
 
 @layer base {
@@ -118,11 +130,34 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* subtle warm grain for depth (non-AI, tactile feel) */
+    background-image:
+      radial-gradient(circle at 15% 12%, oklch(0.62 0.14 58 / 0.03), transparent 40%),
+      radial-gradient(circle at 85% 88%, oklch(0.55 0.13 155 / 0.025), transparent 35%);
+    background-attachment: fixed;
   }
-  /* Custom scrollbar for long lists */
+  /* Headings get tighter, more editorial tracking */
+  h1, h2, h3 { letter-spacing: -0.02em; }
+  /* Custom scrollbar for long lists — warm amber thumb */
   .scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
   .scroll-thin::-webkit-scrollbar-track { background: transparent; }
-  .scroll-thin::-webkit-scrollbar-thumb { background: oklch(0.8 0 0 / 40%); border-radius: 999px; }
-  .scroll-thin::-webkit-scrollbar-thumb:hover { background: oklch(0.7 0 0 / 60%); }
-  .dark .scroll-thin::-webkit-scrollbar-thumb { background: oklch(0.5 0 0 / 40%); }
+  .scroll-thin::-webkit-scrollbar-thumb { background: oklch(0.62 0.14 58 / 35%); border-radius: 999px; }
+  .scroll-thin::-webkit-scrollbar-thumb:hover { background: oklch(0.62 0.14 58 / 55%); }
+  .dark .scroll-thin::-webkit-scrollbar-thumb { background: oklch(0.74 0.14 60 / 30%); }
+  /* Focus rings — warm amber, visible */
+  *:focus-visible {
+    outline: 2px solid oklch(0.62 0.14 58);
+    outline-offset: 2px;
+  }
 }
+
+/* Friendly entrance animations for cards / sections */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up { animation: fade-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-fade-up-1 { animation-delay: 0.05s; }
+.animate-fade-up-2 { animation-delay: 0.1s; }
+.animate-fade-up-3 { animation-delay: 0.15s; }
+.animate-fade-up-4 { animation-delay: 0.2s; }

@@ -20,19 +20,27 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
 export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
   const body = await req.json().catch(() => ({}));
-  const project = await db.project.update({
-    where: { id },
-    data: {
-      ...(body.name !== undefined ? { name: String(body.name) } : {}),
-      ...(body.description !== undefined ? { description: body.description ? String(body.description) : null } : {}),
-      ...(body.location !== undefined ? { location: body.location ? String(body.location) : null } : {}),
-    },
-  });
-  return NextResponse.json({ project });
+  try {
+    const project = await db.project.update({
+      where: { id },
+      data: {
+        ...(body.name !== undefined ? { name: String(body.name) } : {}),
+        ...(body.description !== undefined ? { description: body.description ? String(body.description) : null } : {}),
+        ...(body.location !== undefined ? { location: body.location ? String(body.location) : null } : {}),
+      },
+    });
+    return NextResponse.json({ project });
+  } catch {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
 }
 
 export async function DELETE(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
-  await db.project.delete({ where: { id } });
-  return NextResponse.json({ ok: true });
+  try {
+    await db.project.delete({ where: { id } });
+    return NextResponse.json({ ok: true });
+  } catch {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
 }

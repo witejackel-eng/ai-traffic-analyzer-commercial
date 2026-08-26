@@ -13,8 +13,8 @@ export const brand = {
   // Logo path under /public
   logo: "/brand/logo.svg",
   logoMark: "/brand/mark.svg",
-  // Primary accent color (Tailwind-compatible hex). Used in charts + accents.
-  primaryColor: "#0f766e",
+  // Primary accent color — deep amber (road-sign ochre)
+  primaryColor: "#b45309",
   supportEmail: "support@example.com",
   supportUrl: "https://example.com/support",
   docsUrl: "https://example.com/docs",

@@ -84,7 +84,10 @@ export class GenericHttpProvider implements VisionProvider {
         });
         if (!res.ok) throw new Error(`Provider HTTP ${res.status}`);
         const json = (await res.json()) as { detections?: RawDetection[] };
-        return (json.detections ?? []).map(this.mapResponse).filter((d): d is Detection => !!d);
+        return (json.detections ?? [])
+          .filter((d): d is RawDetection => d != null && typeof d === "object")
+          .map(this.mapResponse)
+          .filter((d): d is Detection => !!d);
       } catch (e) {
         attempt++;
         if (attempt >= max) throw e;
@@ -102,8 +105,13 @@ export class GenericHttpProvider implements VisionProvider {
   }
 
   private mapResponse = (raw: RawDetection): Detection | null => {
-    const cls = CLASS_MAP[String(raw.class || raw.label || "").toLowerCase()] || "car";
-    const conf = typeof raw.confidence === "number" ? raw.confidence : typeof raw.score === "number" ? raw.score : 0.5;
+    const rawClass = String(raw.class || raw.label || "").toLowerCase();
+    if (!rawClass) return null; // reject detections with no class label
+    const cls = CLASS_MAP[rawClass] || "car";
+    let conf = typeof raw.confidence === "number" ? raw.confidence : typeof raw.score === "number" ? raw.score : 0.5;
+    // Clamp/reject invalid confidence — Detection.confidence MUST be in [0,1].
+    if (!Number.isFinite(conf)) return null;
+    conf = Math.max(0, Math.min(1, conf));
     return {
       objectId: String(raw.track_id ?? raw.id ?? Math.random().toString(36).slice(2, 8)),
       objectType: cls,

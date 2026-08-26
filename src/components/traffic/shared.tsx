@@ -17,38 +17,64 @@ export function StatusBadge({ status }: { status: string }) {
 }
 
 /* ------------------------------ KPI card --------------------------------- */
+// Template-inspired stat card: icon + label (top), big value (middle), trend hint (bottom)
 export function KpiCard({
   label,
   value,
   hint,
   icon,
   accent,
+  trend,
 }: {
   label: string;
   value: React.ReactNode;
   hint?: string;
   icon?: React.ReactNode;
   accent?: string;
+  trend?: { direction: "up" | "down" | "neutral"; value?: string };
 }) {
   return (
-    <div className="rounded-xl border bg-card p-4 shadow-sm">
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</span>
-        {icon && <span className={cn("text-muted-foreground", accent)}>{icon}</span>}
+    <div className="animate-fade-up rounded-xl border bg-card p-5 shadow-sm transition-all hover:shadow-md">
+      <div className="flex items-center justify-between pb-2">
+        <span className="text-xs font-medium text-muted-foreground">{label}</span>
+        {icon && (
+          <span className={cn("flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10", accent ?? "text-primary")}>
+            {icon}
+          </span>
+        )}
       </div>
-      <div className="mt-2 text-3xl font-bold tracking-tight tabular-nums">{value}</div>
-      {hint && <div className="mt-1 text-xs text-muted-foreground">{hint}</div>}
+      <div className="text-2xl font-bold tracking-tight tabular-nums text-foreground">{value}</div>
+      {(hint || trend) && (
+        <div className="mt-1 flex items-center gap-1 text-xs">
+          {trend && (
+            <span
+              className={cn(
+                "inline-flex items-center gap-0.5 font-medium",
+                trend.direction === "up" && "text-emerald-600 dark:text-emerald-400",
+                trend.direction === "down" && "text-red-600 dark:text-red-400",
+                trend.direction === "neutral" && "text-muted-foreground",
+              )}
+            >
+              {trend.direction === "up" && "↑"}
+              {trend.direction === "down" && "↓"}
+              {trend.direction === "neutral" && "–"}
+              {trend.value}
+            </span>
+          )}
+          {hint && <span className="text-muted-foreground">{hint}</span>}
+        </div>
+      )}
     </div>
   );
 }
 
 /* ----------------------------- Severity badge ---------------------------- */
 const SEVERITY_STYLES: Record<string, string> = {
-  info: "bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/20",
-  low: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
-  medium: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20",
-  high: "bg-orange-500/15 text-orange-600 dark:text-orange-400 border-orange-500/20",
-  critical: "bg-red-500/15 text-red-600 dark:text-red-400 border-red-500/20",
+  info: "bg-slate-500/12 text-slate-700 dark:text-slate-300 border-slate-500/20",
+  low: "bg-emerald-600/12 text-emerald-700 dark:text-emerald-400 border-emerald-600/25",
+  medium: "bg-amber-600/15 text-amber-800 dark:text-amber-400 border-amber-600/25",
+  high: "bg-orange-600/15 text-orange-800 dark:text-orange-400 border-orange-600/25",
+  critical: "bg-red-600/15 text-red-700 dark:text-red-400 border-red-600/25",
 };
 
 export function SeverityBadge({ severity }: { severity: string }) {
@@ -61,10 +87,10 @@ export function SeverityBadge({ severity }: { severity: string }) {
 
 /* --------------------------- Congestion badge ---------------------------- */
 const CONGESTION_STYLES: Record<string, string> = {
-  LOW: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
-  MODERATE: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20",
-  HIGH: "bg-orange-500/15 text-orange-600 dark:text-orange-400 border-orange-500/20",
-  SEVERE: "bg-red-500/15 text-red-600 dark:text-red-400 border-red-500/20",
+  LOW: "bg-emerald-600/12 text-emerald-700 dark:text-emerald-400 border-emerald-600/25",
+  MODERATE: "bg-amber-600/15 text-amber-800 dark:text-amber-400 border-amber-600/25",
+  HIGH: "bg-orange-600/15 text-orange-800 dark:text-orange-400 border-orange-600/25",
+  SEVERE: "bg-red-600/15 text-red-700 dark:text-red-400 border-red-600/25",
 };
 
 export function CongestionBadge({ level }: { level: string }) {
@@ -78,9 +104,13 @@ export function CongestionBadge({ level }: { level: string }) {
 /* ------------------------------ Empty state ------------------------------ */
 export function EmptyState({ title, description, icon, action }: { title: string; description?: string; icon?: React.ReactNode; action?: React.ReactNode }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed p-12 text-center">
-      {icon && <div className="mb-3 text-muted-foreground">{icon}</div>}
-      <h3 className="text-sm font-semibold">{title}</h3>
+    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-muted/20 p-12 text-center">
+      {icon && (
+        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+          {icon}
+        </div>
+      )}
+      <h3 className="text-sm font-semibold text-foreground">{title}</h3>
       {description && <p className="mt-1 max-w-sm text-xs text-muted-foreground">{description}</p>}
       {action && <div className="mt-4">{action}</div>}
     </div>
@@ -88,13 +118,14 @@ export function EmptyState({ title, description, icon, action }: { title: string
 }
 
 /* ------------------------------ Vehicle icon ----------------------------- */
+// Warm palette — each vehicle class gets a distinct, editorial color
 export const VEHICLE_COLORS: Record<string, string> = {
-  car: "#0ea5e9",
-  motorcycle: "#f59e0b",
-  truck: "#a855f7",
-  bus: "#ef4444",
-  bicycle: "#10b981",
-  van: "#6366f1",
+  car: "#b45309",        // amber
+  motorcycle: "#15803d", // forest green
+  truck: "#7c3aed",      // plum
+  bus: "#dc2626",        // terracotta red
+  bicycle: "#ca8a04",    // gold
+  van: "#475569",        // slate
 };
 
 export function VehicleDot({ type, size = 10 }: { type: string; size?: number }) {

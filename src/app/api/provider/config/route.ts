@@ -3,7 +3,9 @@ import { db } from "@/lib/db";
 
 export async function GET() {
   const cfg = await db.providerConfig.findFirst();
-  return NextResponse.json({ config: cfg });
+  // SECURITY: never return the raw API key to the client. Mask it like PATCH does.
+  const masked = cfg ? { ...cfg, apiKey: cfg.apiKey ? "(set)" : null } : null;
+  return NextResponse.json({ config: masked });
 }
 
 export async function PATCH(req: NextRequest) {

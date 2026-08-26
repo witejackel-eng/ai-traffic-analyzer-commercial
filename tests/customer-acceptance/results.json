@@ -1,0 +1,91 @@
+[
+  {
+    "video": "video-a-day-highway.mp4",
+    "status": "PASS",
+    "dims": "640x360",
+    "duration": 60.01,
+    "detections": 195,
+    "tracks": 11,
+    "events": 12,
+    "total_vehicles": 11,
+    "classes": {
+      "car": 193,
+      "truck": 2
+    },
+    "analysis_time": 8.1,
+    "csv_size": 1724,
+    "json_size": 101777,
+    "html_size": 13188,
+    "db_status": "COMPLETED"
+  },
+  {
+    "video": "video-b-long.mp4",
+    "status": "PASS",
+    "dims": "640x360",
+    "duration": 90,
+    "detections": 179,
+    "tracks": 11,
+    "events": 13,
+    "total_vehicles": 11,
+    "classes": {
+      "car": 179
+    },
+    "analysis_time": 8.2,
+    "csv_size": 1796,
+    "json_size": 97504,
+    "html_size": 14046,
+    "db_status": "COMPLETED"
+  },
+  {
+    "video": "video-c-aerial.mp4",
+    "status": "FAIL_NO_DETECTIONS",
+    "dims": "640x360",
+    "duration": 12.82,
+    "detections": 0,
+    "tracks": 0,
+    "events": 0,
+    "total_vehicles": 0,
+    "classes": {},
+    "analysis_time": 7.2,
+    "csv_size": 357,
+    "json_size": 2325,
+    "html_size": 9192,
+    "db_status": "COMPLETED"
+  },
+  {
+    "video": "video-d-sparse.mp4",
+    "status": "FAIL_NO_DETECTIONS",
+    "dims": "640x360",
+    "duration": 85.993333,
+    "detections": 0,
+    "tracks": 0,
+    "events": 0,
+    "total_vehicles": 0,
+    "classes": {},
+    "analysis_time": 8.7,
+    "csv_size": 357,
+    "json_size": 5425,
+    "html_size": 10939,
+    "db_status": "COMPLETED"
+  },
+  {
+    "video": "video-e-dark.mp4",
+    "status": "PASS",
+    "dims": "640x360",
+    "duration": 30,
+    "detections": 99,
+    "tracks": 7,
+    "events": 7,
+    "total_vehicles": 7,
+    "classes": {
+      "car": 94,
+      "bus": 2,
+      "truck": 3
+    },
+    "analysis_time": 6.4,
+    "csv_size": 1159,
+    "json_size": 53492,
+    "html_size": 11364,
+    "db_status": "COMPLETED"
+  }
+]

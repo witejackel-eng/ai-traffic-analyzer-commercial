@@ -1,0 +1,7 @@
+{
+  "name": "vision-worker",
+  "module": "app.py",
+  "version": "1.0.0",
+  "port": 8001,
+  "description": "Python/FastAPI vision worker — real Faster R-CNN MobileNet V3 inference"
+}

@@ -1,5 +1,7 @@
 // AI Traffic Analyzer — Prisma schema
-// SQLite default datasource. Switchable to PostgreSQL for production deployments.
+// Default provider: sqlite (local dev). For Vercel/Postgres, the vercel-build
+// script in scripts/vercel-build.sh swaps this to "postgresql" automatically
+// based on whether DATABASE_URL starts with "postgres".
 
 generator client {
   provider = "prisma-client-js"

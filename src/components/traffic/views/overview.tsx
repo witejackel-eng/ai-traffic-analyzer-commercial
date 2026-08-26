@@ -16,7 +16,7 @@ import {
   Tooltip,
   Cell,
 } from "recharts";
-import { FolderKanban, Video, BarChart3, AlertTriangle, Cpu, Play, ArrowRight, Car } from "lucide-react";
+import { FolderKanban, Video, BarChart3, AlertTriangle, Cpu, Play, ArrowRight, Car, UploadCloud } from "lucide-react";
 
 interface OverviewData {
   counts: { projects: number; videos: number; analyses: number; completedAnalyses: number; events: number; tracks: number };
@@ -157,7 +157,8 @@ export function OverviewView() {
           <CardTitle className="text-sm">Quick Start</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <QuickAction icon={<UploadCloud className="h-5 w-5" />} title="Upload Video" desc="Import a real traffic MP4" onClick={() => navigate("projects")} highlight />
             <QuickAction icon={<Play className="h-5 w-5" />} title="Try Demo Mode" desc="Pre-loaded sample project" onClick={() => navigate("demo")} />
             <QuickAction icon={<FolderKanban className="h-5 w-5" />} title="New Project" desc="Create an analysis project" onClick={() => navigate("projects")} />
             <QuickAction icon={<Cpu className="h-5 w-5" />} title="Configure Provider" desc="Connect an AI vision API" onClick={() => navigate("settings")} />
@@ -168,12 +169,12 @@ export function OverviewView() {
   );
 }
 
-function QuickAction({ icon, title, desc, onClick }: { icon: React.ReactNode; title: string; desc: string; onClick: () => void }) {
+function QuickAction({ icon, title, desc, onClick, highlight }: { icon: React.ReactNode; title: string; desc: string; onClick: () => void; highlight?: boolean }) {
   return (
-    <button onClick={onClick} className="flex items-center gap-3 rounded-xl border bg-card p-4 text-left transition-all hover:border-primary/40 hover:shadow-sm">
-      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">{icon}</div>
+    <button onClick={onClick} className={`flex items-center gap-3 rounded-xl border p-4 text-left transition-all hover:shadow-sm ${highlight ? "border-primary bg-primary/5 hover:border-primary" : "bg-card hover:border-primary/40"}`}>
+      <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${highlight ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"}`}>{icon}</div>
       <div>
-        <div className="text-sm font-medium">{title}</div>
+        <div className="text-sm font-semibold">{title}</div>
         <div className="text-xs text-muted-foreground">{desc}</div>
       </div>
       <ArrowRight className="ml-auto h-4 w-4 text-muted-foreground" />

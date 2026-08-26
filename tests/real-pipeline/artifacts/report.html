@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REAL Pipeline Test — Traffic Analysis Report</title>
+<style>
+  :root { --ink:#0f172a; --muted:#475569; --line:#e2e8f0; --bg:#f8fafc; --accent:#0f766e; --red:#dc2626; --amber:#d97706; --green:#16a34a; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--ink); margin:0; background:var(--bg); line-height:1.6; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 48px 40px; background:#fff; min-height: 100vh; }
+  h1,h2,h3 { color: var(--ink); font-weight:700; line-height:1.2; }
+  h1 { font-size: 34px; margin: 0 0 8px; }
+  h2 { font-size: 22px; margin: 40px 0 12px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+  h3 { font-size: 16px; margin: 24px 0 8px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  p { margin: 0 0 12px; color:#334155; }
+  .cover { text-align:center; padding: 64px 0 48px; border-bottom: 1px solid var(--line); margin-bottom: 32px; }
+  .cover .kicker { color: var(--accent); font-weight:700; letter-spacing:.16em; text-transform:uppercase; font-size: 13px; }
+  .cover h1 { font-size: 42px; margin: 12px 0; }
+  .cover .meta { color: var(--muted); font-size: 14px; margin-top: 16px; }
+  .grid { display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0 24px; }
+  .kpi { background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:16px; }
+  .kpi .v { font-size: 26px; font-weight:700; color:var(--accent); }
+  .kpi .l { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing:.05em; }
+  table { width:100%; border-collapse: collapse; margin: 12px 0 24px; font-size: 13px; }
+  th, td { text-align:left; padding: 9px 10px; border-bottom:1px solid var(--line); }
+  th { background:var(--bg); font-weight:600; color:var(--muted); text-transform:uppercase; font-size:11px; letter-spacing:.05em; }
+  tr:hover td { background:#fafafa; }
+  .badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:600; text-transform:uppercase; }
+  .badge-info { background:#e0f2fe; color:#0369a1; }
+  .badge-low { background:#dcfce7; color:#15803d; }
+  .badge-medium { background:#fef9c3; color:#a16207; }
+  .badge-high { background:#ffedd5; color:#c2410c; }
+  .badge-critical { background:#fee2e2; color:#b91c1c; }
+  .badge-low.low, .badge-moderate { background:#dcfce7; color:#15803d; }
+  .badge-high.high { background:#ffedd5; color:#c2410c; }
+  .badge-severe { background:#fee2e2; color:#b91c1c; }
+  .meta-list { list-style:none; padding:0; margin:0 0 24px; }
+  .meta-list li { padding:6px 0; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; font-size:14px; }
+  .meta-list li span:first-child { color:var(--muted); }
+  ul.findings li, ul.limit li { margin: 0 0 8px; color:#334155; }
+  .foot { margin-top: 48px; padding-top: 16px; border-top:1px solid var(--line); color:var(--muted); font-size:12px; text-align:center; }
+  .bar { height:8px; background:var(--line); border-radius:4px; overflow:hidden; margin-top:4px; }
+  .bar > i { display:block; height:100%; background:var(--accent); }
+  @media print { .wrap { box-shadow:none; } body { background:#fff; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="cover">
+    <div class="kicker">AI Traffic Analyzer</div>
+    <h1>REAL Pipeline Test</h1>
+    <div>Traffic Analysis Report</div>
+    <div class="meta">
+      REAL Pipeline Test · QA Sandbox<br>
+      Generated 8/25/2026, 8:40:03 AM
+    </div>
+  </div>
+
+  <h2>1. Project Information</h2>
+  <ul class="meta-list">
+    <li><span>Project</span><span>REAL Pipeline Test</span></li>
+    <li><span>Location</span><span>QA Sandbox</span></li>
+    <li><span>Description</span><span>Real video + real inference</span></li>
+    <li><span>Prepared by</span><span>—</span></li>
+  </ul>
+
+  <h2>2. Methodology</h2>
+  <p>Vehicles were detected, classified, and tracked across sampled frames of the source video using the configured AI vision provider (<strong>ssd-mobilenet-v1-coco-onnx</strong>). Trajectories were analyzed to determine direction of travel, line crossings, zone occupancy, dwell time, and anomalous events (stopped vehicles, wrong-way movement, congestion). Estimated speeds were derived from trajectory displacement and a configurable scene scale. All metrics are indicative and subject to the limitations listed in section 12.</p>
+
+  <h2>3. Video Information</h2>
+  <ul class="meta-list">
+    <li><span>Filename</span><span>real-traffic.mp4</span></li>
+    <li><span>Duration</span><span>01:00 (60.0s)</span></li>
+    <li><span>Resolution</span><span>640 × 360</span></li>
+    <li><span>Frame rate</span><span>30 fps</span></li>
+    <li><span>Provider</span><span>ssd-mobilenet-v1-coco-onnx</span></li>
+    <li><span>Analysis started</span><span>8/25/2026, 8:35:41 AM</span></li>
+    <li><span>Analysis completed</span><span>8/25/2026, 8:35:48 AM</span></li>
+  </ul>
+
+  <h2>4. Executive Summary</h2>
+  <div class="grid">
+    <div class="kpi"><div class="v">11</div><div class="l">Total Vehicles</div></div>
+    <div class="kpi"><div class="v">2</div><div class="l">Peak Volume</div></div>
+    <div class="kpi"><div class="v">13</div><div class="l">Events</div></div>
+    <div class="kpi"><div class="v">LOW</div><div class="l">Final Congestion</div></div>
+  </div>
+  <p>Over the 01:00 analysis window, <strong>11</strong> vehicles were tracked. Peak simultaneous volume reached <strong>2</strong> vehicles at 00:00. The analysis recorded <strong>13</strong> events. Final congestion level at the end of the recording was <strong>LOW</strong>. Inbound traffic: 2; outbound: 7.</p>
+
+  <h2>5. Traffic Volume (Time Series)</h2>
+  <table>
+    <thead><tr><th>Time</th><th>Total</th><th>Cars</th><th>Motorcycles</th><th>Trucks</th><th>Buses</th></tr></thead>
+    <tbody><tr><td>00:00</td><td>8</td><td>8</td><td>0</td><td>0</td><td>0</td></tr><tr><td>00:05</td><td>3</td><td>3</td><td>0</td><td>0</td><td>0</td></tr><tr><td>00:10</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>00:15</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>00:20</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>00:25</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>00:30</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>00:35</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>00:40</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>00:45</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>00:50</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>00:55</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr></tbody>
+  </table>
+
+  <h2>6. Vehicle Classification</h2>
+  <table>
+    <thead><tr><th>Class</th><th>Count</th><th>Share</th><th>Distribution</th></tr></thead>
+    <tbody>
+      <tr><td>Cars</td><td>11</td><td>100.0%</td><td><div class="bar"><i style="width:100.0%"></i></div></td></tr>
+    </tbody>
+  </table>
+
+  <h2>7. Directional Analysis</h2>
+  <table>
+    <thead><tr><th>Direction</th><th>Count</th><th>Share</th></tr></thead>
+    <tbody><tr><td>south</td><td>7</td><td>63.6%</td></tr><tr><td>northeast</td><td>2</td><td>18.2%</td></tr><tr><td>east</td><td>2</td><td>18.2%</td></tr></tbody>
+  </table>
+  <p>Inbound (primary flow): <strong>2</strong> · Outbound: <strong>7</strong>.</p>
+
+  <h2>8. Congestion Over Time</h2>
+  <table>
+    <thead><tr><th>Time</th><th>Level</th><th>Occupancy</th><th>Active Vehicles</th></tr></thead>
+    <tbody><tr><td>00:00</td><td><span class="badge badge-low">LOW</span></td><td>20%</td><td>2</td></tr><tr><td>00:10</td><td><span class="badge badge-low">LOW</span></td><td>0%</td><td>0</td></tr><tr><td>00:20</td><td><span class="badge badge-low">LOW</span></td><td>0%</td><td>0</td></tr><tr><td>00:30</td><td><span class="badge badge-low">LOW</span></td><td>0%</td><td>0</td></tr><tr><td>00:40</td><td><span class="badge badge-low">LOW</span></td><td>0%</td><td>0</td></tr><tr><td>00:50</td><td><span class="badge badge-low">LOW</span></td><td>0%</td><td>0</td></tr></tbody>
+  </table>
+
+  <h2>9. Zone Analysis</h2>
+  <table><thead><tr><th>Zone</th><th>Entered</th><th>Exited</th><th>Avg Dwell</th><th>Class Breakdown</th></tr></thead><tbody><tr><td>Road Zone</td><td>6</td><td>1</td><td>2.0s</td><td>—</td></tr></tbody></table>
+
+  <h2>10. Events</h2>
+  <p>13 events recorded. Showing first 50.</p>
+  <table>
+    <thead><tr><th>Time</th><th>Severity</th><th>Type</th><th>Track</th><th>Metadata</th></tr></thead>
+    <tbody><tr><td>00:00</td><td><span class="badge badge-info">info</span></td><td>zone entry</td><td>T0002</td><td>{&quot;zone&quot;:&quot;Road Zone&quot;,&quot;zoneId&quot;:&quot;cmt8etz4d0016szud5k7o9xtp&quot;}</td></tr><tr><td>00:00</td><td><span class="badge badge-low">low</span></td><td>dwell time</td><td>T0002</td><td>{&quot;zone&quot;:&quot;Road Zone&quot;,&quot;dwellSec&quot;:7}</td></tr><tr><td>00:00</td><td><span class="badge badge-info">info</span></td><td>zone entry</td><td>T0003</td><td>{&quot;zone&quot;:&quot;Road Zone&quot;,&quot;zoneId&quot;:&quot;cmt8etz4d0016szud5k7o9xtp&quot;}</td></tr><tr><td>00:00</td><td><span class="badge badge-low">low</span></td><td>dwell time</td><td>T0003</td><td>{&quot;zone&quot;:&quot;Road Zone&quot;,&quot;dwellSec&quot;:7}</td></tr><tr><td>00:01</td><td><span class="badge badge-info">info</span></td><td>count crossing</td><td>T0003</td><td>{&quot;line&quot;:&quot;Center Count Line&quot;,&quot;direction&quot;:&quot;Outbound&quot;,&quot;label&quot;:&quot;Outbound&quot;}</td></tr><tr><td>00:03</td><td><span class="badge badge-info">info</span></td><td>zone entry</td><td>T0020</td><td>{&quot;zone&quot;:&quot;Road Zone&quot;,&quot;zoneId&quot;:&quot;cmt8etz4d0016szud5k7o9xtp&quot;}</td></tr><tr><td>00:03</td><td><span class="badge badge-low">low</span></td><td>dwell time</td><td>T0020</td><td>{&quot;zone&quot;:&quot;Road Zone&quot;,&quot;dwellSec&quot;:4}</td></tr><tr><td>00:04</td><td><span class="badge badge-info">info</span></td><td>zone entry</td><td>T0014</td><td>{&quot;zone&quot;:&quot;Road Zone&quot;,&quot;zoneId&quot;:&quot;cmt8etz4d0016szud5k7o9xtp&quot;}</td></tr><tr><td>00:05</td><td><span class="badge badge-info">info</span></td><td>zone entry</td><td>T0025</td><td>{&quot;zone&quot;:&quot;Road Zone&quot;,&quot;zoneId&quot;:&quot;cmt8etz4d0016szud5k7o9xtp&quot;}</td></tr><tr><td>00:05</td><td><span class="badge badge-medium">medium</span></td><td>stopped vehicle</td><td>T0021</td><td>{&quot;durationSec&quot;:4,&quot;moved&quot;:0.012}</td></tr><tr><td>00:06</td><td><span class="badge badge-info">info</span></td><td>zone entry</td><td>T0028</td><td>{&quot;zone&quot;:&quot;Road Zone&quot;,&quot;zoneId&quot;:&quot;cmt8etz4d0016szud5k7o9xtp&quot;}</td></tr><tr><td>00:07</td><td><span class="badge badge-info">info</span></td><td>count crossing</td><td>T0014</td><td>{&quot;line&quot;:&quot;Center Count Line&quot;,&quot;direction&quot;:&quot;Outbound&quot;,&quot;label&quot;:&quot;Outbound&quot;}</td></tr><tr><td>00:07</td><td><span class="badge badge-info">info</span></td><td>zone exit</td><td>T0028</td><td>{&quot;zone&quot;:&quot;Road Zone&quot;,&quot;zoneId&quot;:&quot;cmt8etz4d0016szud5k7o9xtp&quot;,&quot;dwellSec&quot;:1}</td></tr></tbody>
+  </table>
+
+  <h2>11. Key Findings</h2>
+  <ul class="findings">
+    <li>A total of 11 vehicles were tracked over the recording period.</li><li>The dominant direction of travel was &quot;south&quot; with 7 vehicles (63.6%).</li><li>Peak simultaneous occupancy of 2 vehicles occurred at 0m 0s, classified as LOW congestion.</li><li>1 stopped-vehicle event(s) were recorded, which may indicate incidents, queues, or loading activity.</li>
+  </ul>
+
+  <h2>12. Limitations</h2>
+  <ul class="limit">
+    <li>Vehicle detection and classification rely on the configured AI provider. Accuracy varies by provider, video quality, camera angle, lighting, and weather.</li><li>Speed values are ESTIMATED from trajectory motion and a configurable scene scale. They are NOT legally certified measurements and must not be used for enforcement.</li><li>Direction classification is derived from pixel movement and assumes a configured camera orientation. Compass directions require manual calibration.</li><li>Line crossing counts may be affected by occlusion, overlapping vehicles, and tracker jitter. The dedup logic mitigates but does not eliminate double-counting.</li><li>Zone analytics depend on user-drawn polygons. Incorrectly placed zones produce incorrect occupancy and dwell metrics.</li><li>This report was generated automatically by software. A qualified traffic engineer should review findings before any commercial or regulatory use.</li>
+  </ul>
+
+  <h2>13. Appendix</h2>
+  <h3>Aggregate Counts</h3>
+  <ul class="meta-list">
+    <li><span>Total tracks</span><span>11</span></li>
+    <li><span>Total detections</span><span>148</span></li>
+    <li><span>Time-series buckets</span><span>12</span></li>
+    <li><span>Congestion samples</span><span>6</span></li>
+  </ul>
+
+  <div class="foot">Generated by AI Traffic Analyzer — self-hosted traffic intelligence.<br>Version AI Traffic Analyzer · 2026</div>
+</div>
+</body>
+</html>

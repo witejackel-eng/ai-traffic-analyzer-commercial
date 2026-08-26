@@ -38,9 +38,16 @@ yarn-error.log*
 /storage/
 !/storage/.gitkeep
 
-# data samples (large media — see data/samples/README.md)
-/data/samples/*
-!/data/samples/README.md
+# data samples — keep the real traffic video fixture (CC0) + exclude large generated videos
+/data/samples/test-traffic*.mp4
+!/data/samples/real-traffic.mp4
+
+# real-pipeline dataset — keep the validation videos (CC0) + visual proof artifacts
+# but exclude raw inference JSON outputs
+/tests/real-pipeline/dataset/results.json
+/tests/real-pipeline/accuracy/ground_truth.json
+/tests/real-pipeline/accuracy/accuracy_report.json
+/tests/real-pipeline/accuracy/frames/
 
 # logs
 *.log
@@ -60,5 +67,15 @@ Caddyfile
 /worklog.md
 /upload/
 /examples/
-/mini-services/
-/tests/
+
+# test artifacts (keep the visual proof artifacts; ignore run output)
+/test-results/
+/tests/.playwright-report/
+/tests/results/
+/coverage/
+/dist/
+tests/.playwright-artifacts/
+tsconfig.tsbuildinfo
+
+# pytorch model (not used in production — replaced by the lighter ONNX SSD model)
+mini-services/vision-worker/models/fasterrcnn_mobilenet_v3_coco.pth

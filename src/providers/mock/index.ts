@@ -36,6 +36,16 @@ import type {
   ProviderHealth,
   VisionProvider,
 } from "@/providers/vision-provider";
+import {
+  segmentsIntersect,
+  pointInPolygon,
+} from "@/lib/geometry";
+import {
+  directionFromDelta,
+  oppositeDirection,
+  isWrongWay as isWrongWayDir,
+  type CardinalDirection,
+} from "@/lib/direction";
 
 /* ----------------------------- seeded RNG ------------------------------- */
 function mulberry32(seed: number) {
@@ -78,50 +88,16 @@ const CLASS_SIZE: Record<VehicleClass, { w: number; h: number }> = {
   van: { w: 0.07, h: 0.05 },
 };
 
-/* --------------------------- direction logic ---------------------------- */
-function directionFromDelta(dx: number, dy: number): DirectionLabel {
-  const angle = (Math.atan2(-dy, dx) * 180) / Math.PI; // 0 = east, 90 = north
-  const a = (angle + 360) % 360;
-  if (a >= 337.5 || a < 22.5) return "east";
-  if (a < 67.5) return "northeast";
-  if (a < 112.5) return "north";
-  if (a < 157.5) return "northwest";
-  if (a < 202.5) return "west";
-  if (a < 247.5) return "southwest";
-  if (a < 292.5) return "south";
-  return "southeast";
-}
+/* --------------------------- direction helpers --------------------------- */
+// directionFromDelta, oppositeDirection, isWrongWay imported from @/lib/direction.
+// segmentsIntersect, pointInPolygon imported from @/lib/geometry.
 
 function isWrongWay(direction: DirectionLabel, allowed: DirectionLabel): boolean {
-  const opposites: Record<string, string> = {
-    north: "south", south: "north", east: "west", west: "east",
-    northeast: "southwest", southwest: "northeast",
-    northwest: "southeast", southeast: "northwest",
-  };
-  return opposites[direction] === allowed;
+  if (!isCardinal(direction) || !isCardinal(allowed)) return false;
+  return isWrongWayDir(direction as CardinalDirection, allowed as CardinalDirection);
 }
-
-/* ---------------------- geometry: line crossing ------------------------- */
-function segmentsIntersect(
-  p1: { x: number; y: number },
-  p2: { x: number; y: number },
-  p3: { x: number; y: number },
-  p4: { x: number; y: number },
-): boolean {
-  const ccw = (a: { x: number; y: number }, b: { x: number; y: number }, c: { x: number; y: number }) =>
-    (c.y - a.y) * (b.x - a.x) > (b.y - a.y) * (c.x - a.x);
-  return ccw(p1, p3, p4) !== ccw(p2, p3, p4) && ccw(p1, p2, p3) !== ccw(p1, p2, p4);
-}
-
-function pointInPolygon(p: { x: number; y: number }, poly: { x: number; y: number }[]): boolean {
-  let inside = false;
-  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-    const xi = poly[i].x, yi = poly[i].y;
-    const xj = poly[j].x, yj = poly[j].y;
-    const intersect = yi > p.y !== yj > p.y && p.x < ((xj - xi) * (p.y - yi)) / (yj - yi + 1e-9) + xi;
-    if (intersect) inside = !inside;
-  }
-  return inside;
+function isCardinal(d: string): d is CardinalDirection {
+  return ["north","south","east","west","northeast","northwest","southeast","southwest"].includes(d);
 }
 
 /* ----------------------------- the provider ----------------------------- */
@@ -514,13 +490,10 @@ function boxAround(x: number, y: number, cls: VehicleClass): BoundingBox {
 }
 
 function opposite(d: DirectionLabel): DirectionLabel {
-  const m: Record<string, DirectionLabel> = {
-    north: "south", south: "north", east: "west", west: "east",
-    northeast: "southwest", southwest: "northeast",
-    northwest: "southeast", southeast: "northwest",
-    inbound: "outbound", outbound: "inbound",
-  };
-  return m[d] ?? d;
+  if (d === "inbound") return "outbound";
+  if (d === "outbound") return "inbound";
+  if (isCardinal(d)) return oppositeDirection(d as CardinalDirection) as DirectionLabel;
+  return d;
 }
 
 function estimateSpeed(dist: number, travelTime: number, base: number): number {

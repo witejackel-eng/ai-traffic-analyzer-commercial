@@ -2,6 +2,7 @@
 
 import { NavProvider, useNav } from "@/components/traffic/nav-context";
 import { AppShell } from "@/components/traffic/app-shell";
+import { Guide } from "@/components/traffic/guide";
 import { OverviewView } from "@/components/traffic/views/overview";
 import { ProjectsView } from "@/components/traffic/views/projects";
 import { WorkspaceView } from "@/components/traffic/views/workspace";
@@ -40,6 +41,7 @@ export default function Home() {
       <AppShell>
         <ActiveView />
       </AppShell>
+      <Guide />
     </NavProvider>
   );
 }
